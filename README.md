@@ -1,7 +1,7 @@
 # Loop Builder
 
-A visual **query loop builder** for the WordPress block editor — an open-source
-alternative to commercial query blocks like GutenKit Query Builder.
+A visual **query loop builder** for the WordPress block editor — build dynamic,
+no-code post layouts with powerful filtering.
 
 Drop the **Loop Builder** block on any page or template and build a query
 visually: pick a post type, filter by taxonomy / meta / date / author / keyword,

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Loop Builder
  * Plugin URI:        https://github.com/loop-builder/loop-builder
- * Description:       A visual query loop builder for the WordPress block editor. Display posts, pages, or any custom post type filtered by taxonomy, author, meta, date, or keyword — in grid, list, or slider layouts with pagination and full styling controls. An open-source alternative to GutenKit Query Builder.
+ * Description:       A visual query loop builder for the WordPress block editor. Display posts, pages, or any custom post type filtered by taxonomy, author, meta, date, or keyword — in grid, list, or slider layouts with pagination and full styling controls.
  * Version:           0.5.0
  * Requires at least: 6.5
  * Requires PHP:      7.4

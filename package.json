@@ -1,7 +1,7 @@
 {
 	"name": "loop-builder",
 	"version": "0.5.0",
-	"description": "A visual query loop builder for the WordPress block editor — an open-source alternative to GutenKit Query Builder.",
+	"description": "A visual query loop builder for the WordPress block editor — dynamic, no-code post layouts with powerful filtering.",
 	"author": "Loop Builder Contributors",
 	"license": "GPL-2.0-or-later",
 	"keywords": [

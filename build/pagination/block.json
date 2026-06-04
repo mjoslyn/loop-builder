@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "loop-builder/pagination",
+  "version": "0.1.0",
+  "title": "Pagination",
+  "category": "theme",
+  "parent": [
+    "loop-builder/query"
+  ],
+  "description": "Page through query results with numbers, previous/next links, or a load-more button.",
+  "textdomain": "loop-builder",
+  "usesContext": [
+    "loop-builder/query",
+    "loop-builder/queryId",
+    "loop-builder/displayLayout"
+  ],
+  "attributes": {
+    "paginationType": {
+      "type": "string",
+      "default": "numbers"
+    },
+    "loadMoreLabel": {
+      "type": "string"
+    },
+    "midSize": {
+      "type": "number",
+      "default": 2
+    },
+    "justify": {
+      "type": "string",
+      "default": "center"
+    },
+    "linkStyle": {
+      "type": "string",
+      "default": "plain"
+    },
+    "accentColor": {
+      "type": "string"
+    }
+  },
+  "supports": {
+    "html": false,
+    "reusable": false,
+    "align": true,
+    "color": {
+      "gradients": true,
+      "background": true,
+      "text": true,
+      "link": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php"
+}

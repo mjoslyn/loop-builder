@@ -1,0 +1,27 @@
+{
+	"name": "loop-builder",
+	"version": "0.5.0",
+	"description": "A visual query loop builder for the WordPress block editor — an open-source alternative to GutenKit Query Builder.",
+	"author": "Loop Builder Contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"gutenberg",
+		"block",
+		"query-loop",
+		"query-builder"
+	],
+	"homepage": "https://github.com/loop-builder/loop-builder",
+	"private": true,
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"format": "wp-scripts format",
+		"lint:js": "wp-scripts lint-js",
+		"lint:css": "wp-scripts lint-style",
+		"packages-update": "wp-scripts packages-update"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^30.0.0"
+	}
+}

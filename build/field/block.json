@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "loop-builder/field",
+  "version": "0.1.0",
+  "title": "Custom Field",
+  "category": "theme",
+  "icon": "editor-customchar",
+  "description": "Display a custom field (post meta or ACF) value for the current post.",
+  "keywords": [
+    "meta",
+    "custom field",
+    "acf",
+    "field"
+  ],
+  "textdomain": "loop-builder",
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "attributes": {
+    "metaKey": {
+      "type": "string",
+      "default": ""
+    },
+    "tagName": {
+      "type": "string",
+      "default": "span"
+    },
+    "prefix": {
+      "type": "string",
+      "default": ""
+    },
+    "suffix": {
+      "type": "string",
+      "default": ""
+    },
+    "useAcf": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "supports": {
+    "html": false,
+    "color": {
+      "gradients": true,
+      "background": true,
+      "text": true,
+      "link": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php"
+}

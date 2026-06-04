@@ -1,0 +1,156 @@
+/**
+ * Front-end + editor layout system for the Loop Builder loop container.
+ * Loaded on both contexts so the editor preview matches the front end.
+ *
+ * Column counts arrive as inline custom properties (--loop-builder-columns,
+ * --loop-builder-columns-tablet, --loop-builder-columns-mobile). Inline custom
+ * properties can't be overridden by stylesheet media queries, so we funnel them
+ * through an indirection var (--lb-cols) that the stylesheet *can* reassign per
+ * breakpoint.
+ */
+
+.loop-builder-layout {
+	--loop-builder-gap: 24px;
+	--loop-builder-columns: 3;
+	--loop-builder-columns-tablet: 2;
+	--loop-builder-columns-mobile: 1;
+	--lb-cols: var(--loop-builder-columns);
+
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	.loop-builder-item {
+		min-width: 0;
+		margin: 0;
+		// Each item is a column so card content (and backgrounds) fill the cell.
+		// Combined with the containers' default `stretch` alignment, this gives
+		// equal-height items per row.
+		display: flex;
+		flex-direction: column;
+	}
+
+	&.is-layout-grid {
+		display: grid;
+		grid-template-columns: repeat(var(--lb-cols), minmax(0, 1fr));
+		gap: var(--loop-builder-gap);
+		align-items: stretch;
+	}
+
+	&.is-layout-flex {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: stretch;
+		gap: var(--loop-builder-gap);
+
+		.loop-builder-item {
+			$track: calc(var(--lb-cols) - 1);
+
+			flex: 1 1 calc((100% - #{$track} * var(--loop-builder-gap)) / var(--lb-cols));
+		}
+	}
+
+	&.is-layout-list {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--loop-builder-gap);
+
+		> .loop-builder-item {
+			width: 100%;
+		}
+	}
+
+	&.is-layout-slider {
+		display: flex;
+		gap: var(--loop-builder-gap);
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		scrollbar-width: none; // controls are provided by view.js
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		.loop-builder-item {
+			$track: calc(var(--lb-cols) - 1);
+
+			flex: 0 0 calc((100% - #{$track} * var(--loop-builder-gap)) / var(--lb-cols));
+			scroll-snap-align: start;
+		}
+	}
+
+	// Card styling (opt-in via .has-card-style on the container).
+	&.has-card-style > .loop-builder-item {
+		padding: var(--loop-builder-card-padding, 0);
+		background: var(--loop-builder-card-bg, transparent);
+		border:
+			var(--loop-builder-card-border-width, 0) solid
+			var(--loop-builder-card-border-color, transparent);
+		border-radius: var(--loop-builder-card-radius, 0);
+		overflow: hidden;
+	}
+
+	&.has-card-hover > .loop-builder-item {
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+		&:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+		}
+	}
+}
+
+@for $i from 1 through 6 {
+	.loop-builder-columns-#{$i} {
+		--loop-builder-columns: #{$i};
+	}
+}
+
+// Reassign the active column count per breakpoint. Only the indirection var is
+// touched here, so inline desktop/tablet/mobile values all take effect.
+@media (max-width: 781px) {
+
+	.loop-builder-layout {
+		--lb-cols: var(--loop-builder-columns-tablet);
+	}
+}
+
+@media (max-width: 600px) {
+
+	.loop-builder-layout {
+		--lb-cols: var(--loop-builder-columns-mobile);
+	}
+}
+
+// The slider carousel chrome injected by view.js.
+.loop-builder-slider {
+	position: relative;
+
+	.loop-builder-slider-nav {
+		display: flex;
+		justify-content: center;
+		gap: 0.5rem;
+		margin-top: 1rem;
+	}
+
+	.loop-builder-slider-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 1px solid currentcolor;
+		border-radius: 999px;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+		line-height: 1;
+
+		&[disabled] {
+			opacity: 0.35;
+			cursor: default;
+		}
+	}
+}

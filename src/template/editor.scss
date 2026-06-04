@@ -1,0 +1,12 @@
+/**
+ * Editor affordances for the loop item preview. Inactive items render as
+ * clickable previews; make that affordance discoverable without disrupting
+ * the front-end-matching layout from query/style.scss.
+ */
+
+.loop-builder-layout {
+
+	> .loop-builder-item[role="button"] {
+		cursor: pointer;
+	}
+}

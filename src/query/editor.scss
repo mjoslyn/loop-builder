@@ -1,0 +1,23 @@
+/**
+ * Editor-only affordances for the query block. The shared layout styles live in
+ * style.scss so the preview matches the front end exactly.
+ */
+
+.wp-block-loop-builder {
+	// Give empty/list-locked inner areas a little breathing room while editing.
+	.loop-builder-layout.is-layout-grid {
+		min-height: 1em;
+	}
+}
+
+// A single filter clause (taxonomy / meta) in the inspector.
+.loop-builder-clause {
+	margin-bottom: 16px;
+	padding: 12px;
+	border: 1px solid #e0e0e0;
+	border-radius: 2px;
+
+	+ .loop-builder-clause {
+		margin-top: 4px;
+	}
+}

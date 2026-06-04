@@ -1,0 +1,94 @@
+/**
+ * Pagination styles (front-end + editor). Neutral by default so theme
+ * typography and color settings drive the look; the Pagination style panel
+ * adds alignment, a boxed link treatment, and an accent (via --lb-pg-accent).
+ */
+
+.wp-block-loop-builder-pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5em 0.5em;
+	margin-top: 1.5em;
+
+	// Alignment.
+	&.is-justify-left {
+		justify-content: flex-start;
+	}
+
+	&.is-justify-center {
+		justify-content: center;
+	}
+
+	&.is-justify-right {
+		justify-content: flex-end;
+	}
+
+	&.is-justify-space-between {
+		justify-content: space-between;
+	}
+
+	// Numbered + prev/next links.
+	.page-numbers,
+	.prev-page,
+	.next-page {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+		line-height: 1;
+	}
+
+	.page-numbers.current {
+		font-weight: 700;
+		color: var(--lb-pg-accent, inherit);
+	}
+
+	.page-numbers.dots {
+		opacity: 0.6;
+	}
+
+	// Boxed treatment: page numbers and prev/next become bordered chips.
+	&.is-pg-boxed {
+
+		.page-numbers:not(.dots),
+		.prev-page,
+		.next-page {
+			min-width: 2.5em;
+			padding: 0.5em 0.75em;
+			border: 1px solid var(--lb-pg-accent, currentcolor);
+			border-radius: 4px;
+			transition: background-color 0.15s ease, color 0.15s ease;
+		}
+
+		a.page-numbers:hover,
+		.prev-page:hover,
+		.next-page:hover {
+			background: var(--lb-pg-accent, currentcolor);
+			color: #fff;
+		}
+
+		.page-numbers.current {
+			background: var(--lb-pg-accent, currentcolor);
+			color: #fff;
+			border-color: var(--lb-pg-accent, currentcolor);
+		}
+
+		.page-numbers.dots {
+			border-color: transparent;
+		}
+	}
+
+	.loop-builder-load-more {
+		cursor: pointer;
+
+		&.is-loading {
+			opacity: 0.6;
+			cursor: default;
+		}
+
+		&[disabled] {
+			cursor: default;
+		}
+	}
+}

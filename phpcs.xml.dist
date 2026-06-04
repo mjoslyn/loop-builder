@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="Loop Builder">
+	<description>WordPress Coding Standards for the Loop Builder plugin.</description>
+
+	<!-- What to scan. -->
+	<file>.</file>
+	<exclude-pattern>/build/*</exclude-pattern>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+
+	<!-- Only PHP. -->
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- Target versions. -->
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_wp_version" value="6.5"/>
+
+	<rule ref="WordPress">
+		<!-- block.json drives the build; we don't ship a translations loader path requirement. -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+	</rule>
+
+	<!-- Enforce our text domain. -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="loop-builder"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Enforce our global prefixes. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="LoopBuilder"/>
+				<element value="loop_builder"/>
+				<element value="LOOP_BUILDER"/>
+			</property>
+		</properties>
+		<!-- Block render templates are included inside a function scope by
+		     WP_Block::render(), so their top-level variables are not true
+		     globals (core's own block templates use unprefixed names too). -->
+		<exclude-pattern>*/src/*/render.php</exclude-pattern>
+	</rule>
+
+	<!-- Same rationale: render templates are function-scoped at runtime. -->
+	<rule ref="WordPress.WP.GlobalVariablesOverride">
+		<exclude-pattern>*/src/*/render.php</exclude-pattern>
+	</rule>
+</ruleset>

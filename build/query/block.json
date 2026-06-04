@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "loop-builder/query",
+  "version": "0.1.0",
+  "title": "Loop Builder",
+  "category": "theme",
+  "icon": "grid-view",
+  "description": "Visually build a query and display posts, pages, or any custom post type in flexible layouts.",
+  "keywords": [
+    "query",
+    "loop",
+    "posts",
+    "grid",
+    "list",
+    "builder"
+  ],
+  "textdomain": "loop-builder",
+  "supports": {
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "anchor": true,
+    "interactivity": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "background": true,
+      "text": true,
+      "link": true
+    }
+  },
+  "attributes": {
+    "queryId": {
+      "type": "number"
+    },
+    "query": {
+      "type": "object",
+      "default": {
+        "postType": "post",
+        "inherit": false,
+        "perPage": 6,
+        "pages": 0,
+        "offset": 0,
+        "order": "desc",
+        "orderBy": "date",
+        "author": "",
+        "search": "",
+        "sticky": "",
+        "exclude": [],
+        "postIn": [],
+        "parents": [],
+        "taxQuery": {
+          "relation": "AND",
+          "clauses": []
+        },
+        "metaQuery": {
+          "relation": "AND",
+          "clauses": []
+        },
+        "dateQuery": {}
+      }
+    },
+    "displayLayout": {
+      "type": "object",
+      "default": {
+        "type": "grid",
+        "columns": 3,
+        "columnsTablet": 2,
+        "columnsMobile": 1,
+        "gap": "24px"
+      }
+    },
+    "cardStyle": {
+      "type": "object",
+      "default": {}
+    },
+    "tagName": {
+      "type": "string",
+      "default": "div"
+    }
+  },
+  "providesContext": {
+    "loop-builder/query": "query",
+    "loop-builder/queryId": "queryId",
+    "loop-builder/displayLayout": "displayLayout",
+    "loop-builder/cardStyle": "cardStyle"
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "render": "file:./render.php"
+}

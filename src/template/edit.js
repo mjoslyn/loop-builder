@@ -22,9 +22,15 @@ import { Spinner } from '@wordpress/components';
 
 const DEFAULT_TEMPLATE = [
 	[ 'core/post-featured-image', { isLink: true } ],
-	[ 'core/post-title', { isLink: true, level: 3 } ],
-	[ 'core/post-date', {} ],
-	[ 'core/post-excerpt', {} ],
+	[
+		'core/group',
+		{ className: 'loop-builder-card-content', layout: { type: 'flow' } },
+		[
+			[ 'core/post-title', { isLink: true, level: 3 } ],
+			[ 'core/post-date', {} ],
+			[ 'core/post-excerpt', {} ],
+		],
+	],
 ];
 
 // REST orderby only supports a subset of WP_Query's keys; map the rest to a
@@ -204,6 +210,18 @@ export default function Edit( { clientId, context } ) {
 		} ),
 		...( cardStyle?.borderColor && {
 			'--loop-builder-card-border-color': cardStyle.borderColor,
+		} ),
+		...( cardStyle?.imageBackground && {
+			'--loop-builder-card-image-bg': cardStyle.imageBackground,
+		} ),
+		...( cardStyle?.imagePadding && {
+			'--loop-builder-card-image-padding': cardStyle.imagePadding,
+		} ),
+		...( cardStyle?.contentBackground && {
+			'--loop-builder-card-content-bg': cardStyle.contentBackground,
+		} ),
+		...( cardStyle?.contentPadding && {
+			'--loop-builder-card-content-padding': cardStyle.contentPadding,
 		} ),
 	};
 

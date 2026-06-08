@@ -81,7 +81,9 @@
 		}
 	}
 
-	// Card styling (opt-in via .has-card-style on the container).
+	// Card styling (opt-in via .has-card-style on the container). The card frame
+	// is the outer box; the image and content zones each get their own
+	// background + padding so they can be styled independently.
 	&.has-card-style > .loop-builder-item {
 		padding: var(--loop-builder-card-padding, 0);
 		background: var(--loop-builder-card-bg, transparent);
@@ -90,6 +92,23 @@
 			var(--loop-builder-card-border-color, transparent);
 		border-radius: var(--loop-builder-card-radius, 0);
 		overflow: hidden;
+
+		// Image zone: the featured image figure sits flush so its own
+		// background + padding (not the figure's default margin) control spacing.
+		> .wp-block-post-featured-image {
+			margin: 0;
+			padding: var(--loop-builder-card-image-padding, 0);
+			background: var(--loop-builder-card-image-bg, transparent);
+		}
+
+		// Content zone: the text group grows to fill the remaining height so its
+		// background reaches the bottom edge of equal-height cards.
+		> .loop-builder-card-content {
+			flex: 1;
+			margin: 0;
+			padding: var(--loop-builder-card-content-padding, 0);
+			background: var(--loop-builder-card-content-bg, transparent);
+		}
 	}
 
 	&.has-card-hover > .loop-builder-item {

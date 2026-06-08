@@ -44,15 +44,25 @@ class Rest {
 				'args'                => array(
 					'postId'  => array(
 						'required'          => true,
+						'type'              => 'integer',
+						'minimum'           => 1,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					),
 					'queryId' => array(
 						'required'          => true,
+						'type'              => 'integer',
+						'minimum'           => 1,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					),
 					'page'    => array(
 						'required'          => true,
+						'type'              => 'integer',
+						'minimum'           => 1,
+						'default'           => 1,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					),
 				),
 			)

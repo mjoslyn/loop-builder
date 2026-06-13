@@ -24,7 +24,7 @@ const DEFAULT_TEMPLATE = [
 	[ 'core/post-featured-image', { isLink: true } ],
 	[
 		'core/group',
-		{ className: 'loop-builder-card-content', layout: { type: 'flow' } },
+		{ className: 'loop-builder-card-content', layout: { type: 'default' } },
 		[
 			[ 'core/post-title', { isLink: true, level: 3 } ],
 			[ 'core/post-date', {} ],

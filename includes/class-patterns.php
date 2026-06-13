@@ -41,6 +41,27 @@ class Patterns {
 		foreach ( self::patterns() as $name => $pattern ) {
 			register_block_pattern( 'loop-builder/' . $name, $pattern );
 		}
+
+		self::ensure_user_pattern_category();
+	}
+
+	/**
+	 * Make sure a "Loop Builder" term exists in the user-pattern taxonomy, so
+	 * loops saved as patterns from the editor are filed alongside the bundled
+	 * ones (the inserter merges registered and user categories by slug).
+	 */
+	private static function ensure_user_pattern_category(): void {
+		if ( ! taxonomy_exists( 'wp_pattern_category' ) ) {
+			return;
+		}
+
+		if ( ! term_exists( self::CATEGORY, 'wp_pattern_category' ) ) {
+			wp_insert_term(
+				__( 'Loop Builder', 'loop-builder' ),
+				'wp_pattern_category',
+				array( 'slug' => self::CATEGORY )
+			);
+		}
 	}
 
 	/**

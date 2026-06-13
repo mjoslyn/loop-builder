@@ -17,6 +17,7 @@ import QueryPanel from './inspector/query-panel';
 import FiltersPanel from './inspector/filters-panel';
 import LayoutPanel from './inspector/layout-panel';
 import StylePanel from './inspector/style-panel';
+import SaveAsPattern from './save-pattern';
 
 const TEMPLATE = [
 	[ 'loop-builder/template' ],
@@ -24,7 +25,7 @@ const TEMPLATE = [
 	[ 'loop-builder/pagination' ],
 ];
 
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { queryId, query, displayLayout, cardStyle } = attributes;
 	const instanceId = useInstanceId( Edit );
 
@@ -51,6 +52,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	return (
 		<>
+			<SaveAsPattern clientId={ clientId } />
 			<InspectorControls>
 				<QueryPanel query={ query } setQuery={ setQuery } />
 				<FiltersPanel query={ query } setQuery={ setQuery } />

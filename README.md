@@ -98,6 +98,12 @@ Items are **equal-height by default**.
 **Card style** panel — opt-in per-item styling: background, padding, border, corner
 radius, and a hover lift. (Applied via CSS custom properties, so it stays light.)
 
+**Typography** — the query block, the item template, and the Custom Field block
+all support the standard typography tools (font family, size, appearance, line
+height, letter spacing, case, decoration) in the Styles tab. Set a base font on
+the whole loop or just the cards; the core field blocks inside the card (Post
+Title, Post Date, …) carry their own typography controls for per-field overrides.
+
 ## Pagination
 
 Add the **Pagination** block inside the loop and choose a type:
@@ -154,6 +160,11 @@ links in this mode.
 
 - **Patterns** (Inserter → "Loop Builder"): **Blog grid**, **News list**,
   **Card slider**.
+- **Save your own**: design a loop, then click **Save as pattern** in the query
+  block's toolbar. Name it, choose synced or unsynced, and it's saved as a user
+  pattern in the same "Loop Builder" category — ready to insert on any page.
+  Pagination stays independent between copies (each insertion gets its own
+  query ID).
 - **Variations**: quick-start **List** and **Slider** layouts for the query block.
 
 ## How it works

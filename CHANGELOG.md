@@ -9,6 +9,35 @@ All notable changes to Loop Builder are documented here. This project adheres to
   category / search templates that use Loop Builder. (On classic themes, the
   inherit-query mode added in 0.4.0 already powers archive / search displays.)
 
+## [0.7.0]
+
+### Added
+- **Custom Field text alignment** — the field block now exposes a left / center /
+  right alignment control (via `typography.textAlign`). A small stylesheet
+  promotes the field to a block box when aligned so the choice still applies for
+  inline tags (`span` / `strong` / `em`).
+- **Max items (total)** on the loop — caps the number of items shown across all
+  pages. The final page shrinks to respect the cap, and numbered / load-more
+  pagination stop at the resulting page count.
+- **Link entire item to post** — an option that makes the whole loop item
+  clickable via a stretched-link overlay, keeping genuine links and buttons
+  inside the item independently clickable.
+
+### Developer
+- PHPUnit unit tests for the query-arg and pagination-cap logic
+  (`composer test`).
+- wp-env + Playwright end-to-end tests (`npm run test:e2e`).
+
+## [0.6.0]
+
+### Added
+- Custom Field block image and link display modes; an Event Date block for
+  The Events Calendar.
+- Save a configured loop as a reusable pattern; per-loop typography defaults.
+
+### Changed
+- Query-building and editor refinements.
+
 ## [0.5.0]
 
 ### Added

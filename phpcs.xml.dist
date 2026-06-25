@@ -7,6 +7,10 @@
 	<exclude-pattern>/build/*</exclude-pattern>
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<!-- Dev-only unit tests follow PHPUnit conventions (snake_case methods, no
+	     per-test doc blocks, unprefixed WordPress-function stubs), not the
+	     plugin's distribution ruleset. -->
+	<exclude-pattern>/tests/*</exclude-pattern>
 
 	<!-- Only PHP. -->
 	<arg name="extensions" value="php"/>

@@ -1,5 +1,7 @@
 /node_modules/
 /vendor/
+/.phpunit.cache/
+/artifacts/
 *.log
 .DS_Store
 .cache/

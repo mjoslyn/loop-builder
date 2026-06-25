@@ -1,10 +1,10 @@
 === Loop Builder ===
-Contributors: loopbuilder
+Contributors: robotofthefuture
 Tags: query loop, query builder, posts, grid, gutenberg
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.7.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,19 @@ This is an open-source alternative to commercial query-builder blocks.
 3. Add the "Loop Builder" block to any post or page.
 
 == Changelog ==
+
+= 0.7.0 =
+* Custom Field block: text alignment control (left / center / right) that also
+  applies when the field renders as an inline tag.
+* Loop: "Max items" total cap that limits how many items show across all pages.
+* Loop: "Link entire item to post" option — the whole item becomes clickable
+  while links and buttons inside it keep working.
+
+= 0.6.0 =
+* Custom Field block gained image and link display modes, plus an Event Date
+  block for The Events Calendar.
+* Save a configured loop as a reusable pattern; typography defaults for loops.
+* Query and editor refinements.
 
 = 0.5.0 =
 * New Custom Field block: display post meta / ACF values per loop item.

@@ -1,0 +1,17 @@
+/**
+ * Custom Field styles (front-end + editor).
+ *
+ * Text alignment (typography.textAlign) emits a has-text-align-* class. The
+ * block can render as an inline tag (span/strong/em), where text-align has no
+ * effect — promote it to a block box when an alignment is chosen so the choice
+ * actually applies regardless of the selected HTML tag.
+ */
+
+.wp-block-loop-builder-field {
+
+	&.has-text-align-left,
+	&.has-text-align-center,
+	&.has-text-align-right {
+		display: block;
+	}
+}

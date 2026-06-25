@@ -30,6 +30,25 @@
 		flex-direction: column;
 	}
 
+	// Whole-item link: an absolutely-positioned overlay covers the item so the
+	// entire card is clickable. Real links/buttons inside are lifted above it so
+	// they remain independently clickable (the Bootstrap "stretched link" idiom).
+	.loop-builder-item--linked {
+		position: relative;
+
+		.loop-builder-item-link {
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+		}
+
+		a:not(.loop-builder-item-link),
+		button {
+			position: relative;
+			z-index: 2;
+		}
+	}
+
 	&.is-layout-grid {
 		display: grid;
 		grid-template-columns: repeat(var(--lb-cols), minmax(0, 1fr));

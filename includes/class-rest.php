@@ -120,8 +120,11 @@ class Rest {
 			}
 		}
 
-		// Public meta keys actually present on posts of this type.
+		// Public meta keys actually present on posts of this type. A one-off
+		// editor lookup (the field picker), so the direct query is acceptable and
+		// caching would only risk showing a stale list while building a layout.
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$keys = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT DISTINCT pm.meta_key
@@ -133,7 +136,7 @@ class Rest {
 				$post_type,
 				$wpdb->esc_like( '_' ) . '%'
 			)
-		); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		);
 
 		foreach ( (array) $keys as $key ) {
 			if ( '' !== $key && ! isset( $fields[ $key ] ) ) {
@@ -229,6 +232,10 @@ class Rest {
 		$max = (int) $wpq->max_num_pages;
 		if ( ! empty( $query_attr['pages'] ) ) {
 			$max = min( $max, (int) $query_attr['pages'] );
+		}
+		if ( ! empty( $query_attr['maxItems'] ) ) {
+			$per = max( 1, (int) ( $query_attr['perPage'] ?? 10 ) );
+			$max = min( $max, (int) ceil( (int) $query_attr['maxItems'] / $per ) );
 		}
 		return max( 1, $max );
 	}

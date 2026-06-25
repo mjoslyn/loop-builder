@@ -172,7 +172,7 @@ if ( 'link' === $display_as ) {
 	return;
 }
 
-// Text (default).
+// Default mode: render the value as text.
 $display = \LoopBuilder\Render::stringify_field_value( $value );
 if ( '' === $display ) {
 	return;

@@ -50,6 +50,11 @@ class Render {
 	public static function render_items( \WP_Block $block, \WP_Query $query, string $item_tag = 'li' ): string {
 		$content = '';
 
+		// Optionally make each item a single clickable link to its post, using a
+		// stretched-link overlay so genuine links/buttons inside still work.
+		$display   = isset( $block->context['loop-builder/displayLayout'] ) ? (array) $block->context['loop-builder/displayLayout'] : array();
+		$link_item = ! empty( $display['linkItem'] );
+
 		while ( $query->have_posts() ) {
 			$query->the_post();
 			$post_id   = get_the_ID();
@@ -75,8 +80,21 @@ class Render {
 
 			remove_filter( 'render_block_context', $inject, 1 );
 
-			$classes  = 'loop-builder-item';
-			$content .= sprintf( '<%1$s class="%2$s">%3$s</%1$s>', tag_escape( $item_tag ), esc_attr( $classes ), $inner );
+			$classes = 'loop-builder-item';
+			$overlay = '';
+			if ( $link_item ) {
+				$permalink = get_permalink( $post_id );
+				if ( $permalink ) {
+					$classes .= ' loop-builder-item--linked';
+					$overlay  = sprintf(
+						'<a class="loop-builder-item-link" href="%s" aria-label="%s"></a>',
+						esc_url( $permalink ),
+						esc_attr( get_the_title( $post_id ) )
+					);
+				}
+			}
+
+			$content .= sprintf( '<%1$s class="%2$s">%3$s%4$s</%1$s>', tag_escape( $item_tag ), esc_attr( $classes ), $overlay, $inner );
 		}
 
 		wp_reset_postdata();

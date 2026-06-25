@@ -59,6 +59,7 @@
         "postType": "post",
         "inherit": false,
         "perPage": 6,
+        "maxItems": 0,
         "pages": 0,
         "offset": 0,
         "order": "desc",
@@ -87,7 +88,8 @@
         "columns": 3,
         "columnsTablet": 2,
         "columnsMobile": 1,
-        "gap": "24px"
+        "gap": "24px",
+        "linkItem": false
       }
     },
     "cardStyle": {

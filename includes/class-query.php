@@ -28,11 +28,12 @@ class Query {
 	 * @return array WP_Query arguments.
 	 */
 	public static function to_query_args( array $query, int $page = 1 ): array {
-		$query    = wp_parse_args(
+		$query     = wp_parse_args(
 			$query,
 			array(
 				'postType'       => 'post',
 				'perPage'        => 10,
+				'maxItems'       => 0,
 				'offset'         => 0,
 				'order'          => 'desc',
 				'orderBy'        => 'date',
@@ -47,8 +48,17 @@ class Query {
 				'metaQuery'      => array(),
 			)
 		);
-		$per_page = (int) $query['perPage'];
-		$offset   = (int) $query['offset'];
+		$per_page  = (int) $query['perPage'];
+		$max_items = (int) $query['maxItems'];
+		$offset    = (int) $query['offset'];
+
+		// Effective per-page count. When a total cap (maxItems) is set, shrink the
+		// final page so the running total across pagination never exceeds it.
+		$posts_per_page = $per_page;
+		if ( $max_items > 0 ) {
+			$remaining      = $max_items - ( $per_page * ( max( 1, $page ) - 1 ) );
+			$posts_per_page = max( 0, min( $per_page, $remaining ) );
+		}
 
 		$orderby = self::sanitize_orderby( $query['orderBy'] );
 
@@ -57,7 +67,7 @@ class Query {
 			'order'               => self::sanitize_order( $query['order'] ),
 			'orderby'             => $orderby,
 			'post_status'         => 'publish',
-			'posts_per_page'      => $per_page,
+			'posts_per_page'      => $posts_per_page,
 			'offset'              => ( $per_page * ( max( 1, $page ) - 1 ) ) + $offset,
 			'ignore_sticky_posts' => 1,
 			'no_found_rows'       => false,
@@ -112,6 +122,12 @@ class Query {
 		$meta_query = self::build_meta_query( $query['metaQuery'] );
 		if ( $meta_query ) {
 			$args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		}
+
+		// A page that lies entirely beyond the max-items cap matches nothing.
+		// Set last so earlier post__in handling (e.g. sticky 'only') can't undo it.
+		if ( $max_items > 0 && $posts_per_page < 1 ) {
+			$args['post__in'] = array( 0 );
 		}
 
 		/**

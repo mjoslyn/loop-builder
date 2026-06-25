@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	PanelBody,
 	RangeControl,
+	ToggleControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalUnitControl as UnitControl,
@@ -28,6 +29,7 @@ export default function LayoutPanel( { displayLayout, setDisplayLayout } ) {
 		columnsTablet = 2,
 		columnsMobile = 1,
 		gap = '24px',
+		linkItem = false,
 	} = displayLayout;
 
 	const showColumns = HAS_COLUMNS.includes( type );
@@ -94,6 +96,19 @@ export default function LayoutPanel( { displayLayout, setDisplayLayout } ) {
 					{ value: 'em', label: 'em' },
 					{ value: 'rem', label: 'rem' },
 				] }
+			/>
+
+			<ToggleControl
+				__nextHasNoMarginBottom
+				label={ __( 'Link entire item to post', 'loop-builder' ) }
+				help={ __(
+					'Make the whole item clickable, linking to the post. Links and buttons inside the item still work.',
+					'loop-builder'
+				) }
+				checked={ linkItem }
+				onChange={ ( value ) =>
+					setDisplayLayout( { linkItem: value } )
+				}
 			/>
 		</PanelBody>
 	);

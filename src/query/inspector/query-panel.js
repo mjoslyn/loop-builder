@@ -132,6 +132,21 @@ export default function QueryPanel( { query, setQuery } ) {
 					/>
 
 					<NumberControl
+						label={ __( 'Max items (total)', 'loop-builder' ) }
+						value={ query.maxItems || 0 }
+						min={ 0 }
+						onChange={ ( value ) =>
+							setQuery( {
+								maxItems: parseInt( value, 10 ) || 0,
+							} )
+						}
+						help={ __(
+							'The most items this loop will ever show across all pages. 0 = no limit.',
+							'loop-builder'
+						) }
+					/>
+
+					<NumberControl
 						label={ __(
 							'Skip first N items (offset)',
 							'loop-builder'

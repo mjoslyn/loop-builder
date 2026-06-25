@@ -135,10 +135,18 @@ const MemoizedTemplateBlockPreview = memo( TemplateBlockPreview );
 export default function Edit( { clientId, context } ) {
 	const {
 		'loop-builder/query': query = {},
+		'loop-builder/queryId': loopQueryId,
 		'loop-builder/displayLayout': displayLayout = {},
 		'loop-builder/cardStyle': cardStyle = {},
 	} = context;
 	const [ activeBlockContextId, setActiveBlockContextId ] = useState();
+
+	// Core field blocks (post-title/date/excerpt/featured-image) only read their
+	// data from the per-item context when they detect they're inside a query loop
+	// — which they do by checking for a finite `queryId` context. Without it they
+	// fall back to the post being edited, so the preview shows empty placeholders.
+	// Provide one (the loop's own id) so each card resolves its real post.
+	const queryId = Number.isFinite( loopQueryId ) ? loopQueryId : 0;
 
 	// A multi-type query previews its first type; an inherited query previews
 	// recent posts as a stand-in (the real archive context exists only on the front end).
@@ -172,8 +180,9 @@ export default function Edit( { clientId, context } ) {
 			posts?.map( ( post ) => ( {
 				postType: post.type,
 				postId: post.id,
+				queryId,
 			} ) ),
-		[ posts ]
+		[ posts, queryId ]
 	);
 
 	const layoutType = displayLayout.type || 'grid';
@@ -210,18 +219,6 @@ export default function Edit( { clientId, context } ) {
 		} ),
 		...( cardStyle?.borderColor && {
 			'--loop-builder-card-border-color': cardStyle.borderColor,
-		} ),
-		...( cardStyle?.imageBackground && {
-			'--loop-builder-card-image-bg': cardStyle.imageBackground,
-		} ),
-		...( cardStyle?.imagePadding && {
-			'--loop-builder-card-image-padding': cardStyle.imagePadding,
-		} ),
-		...( cardStyle?.contentBackground && {
-			'--loop-builder-card-content-bg': cardStyle.contentBackground,
-		} ),
-		...( cardStyle?.contentPadding && {
-			'--loop-builder-card-content-padding': cardStyle.contentPadding,
 		} ),
 	};
 

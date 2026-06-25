@@ -1,13 +1,12 @@
 /**
- * Filters inspector — groups the advanced query filters: taxonomy, custom
- * fields (meta), and date. Each lives in its own collapsible panel.
+ * Filters inspector — groups the advanced query filters: taxonomy and custom
+ * fields (meta). Each lives in its own collapsible panel.
  */
 import { __ } from '@wordpress/i18n';
 import { PanelBody } from '@wordpress/components';
 
 import TaxonomyFilters from './taxonomy-filters';
 import MetaFilters from './meta-filters';
-import DateFilter from './date-filter';
 
 export default function FiltersPanel( { query, setQuery } ) {
 	return (
@@ -24,13 +23,6 @@ export default function FiltersPanel( { query, setQuery } ) {
 				initialOpen={ false }
 			>
 				<MetaFilters query={ query } setQuery={ setQuery } />
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Date filter', 'loop-builder' ) }
-				initialOpen={ false }
-			>
-				<DateFilter query={ query } setQuery={ setQuery } />
 			</PanelBody>
 		</>
 	);

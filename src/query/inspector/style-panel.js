@@ -1,11 +1,10 @@
 /**
- * "Card style" inspector panels — opt-in visual styling applied to every loop
- * item. The card is split into three zones, each stored on the cardStyle
- * attribute and applied via CSS custom properties at render time:
+ * "Card style" inspector panel — opt-in visual styling for the outer frame of
+ * every loop item (background, padding, border, radius, hover lift), stored on
+ * the cardStyle attribute and applied via CSS custom properties at render time.
  *
- *   • Card    — the outer frame: background, padding, border, radius, hover lift.
- *   • Image   — the featured-image zone: background and padding.
- *   • Content — the text group (title/date/excerpt): background and padding.
+ * The featured-image and content zones are styled directly on their own blocks
+ * (the Featured Image block and the content Group), so they have no panel here.
  */
 /* eslint-disable @wordpress/no-unsafe-wp-apis -- UnitControl is stable in practice and exported only under the __experimental prefix. */
 import { __ } from '@wordpress/i18n';
@@ -28,18 +27,8 @@ export default function StylePanel( { cardStyle, setCardStyle } ) {
 	const [ palette ] = useSettings( 'color.palette' );
 	const colors = palette || [];
 
-	const {
-		background,
-		padding,
-		radius,
-		borderWidth,
-		borderColor,
-		hoverLift,
-		imageBackground,
-		imagePadding,
-		contentBackground,
-		contentPadding,
-	} = cardStyle || {};
+	const { background, padding, radius, borderWidth, borderColor, hoverLift } =
+		cardStyle || {};
 
 	const colorControl = ( label, value, key ) => (
 		<BaseControl __nextHasNoMarginBottom>
@@ -101,38 +90,6 @@ export default function StylePanel( { cardStyle, setCardStyle } ) {
 						setCardStyle( { hoverLift: value } )
 					}
 				/>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Image', 'loop-builder' ) }
-				initialOpen={ false }
-			>
-				{ colorControl(
-					__( 'Background', 'loop-builder' ),
-					imageBackground,
-					'imageBackground'
-				) }
-				{ unitControl(
-					__( 'Padding', 'loop-builder' ),
-					imagePadding,
-					'imagePadding'
-				) }
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Content', 'loop-builder' ) }
-				initialOpen={ false }
-			>
-				{ colorControl(
-					__( 'Background', 'loop-builder' ),
-					contentBackground,
-					'contentBackground'
-				) }
-				{ unitControl(
-					__( 'Padding', 'loop-builder' ),
-					contentPadding,
-					'contentPadding'
-				) }
 			</PanelBody>
 		</>
 	);

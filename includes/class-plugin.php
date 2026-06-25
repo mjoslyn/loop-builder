@@ -29,6 +29,7 @@ final class Plugin {
 		'no-results',
 		'pagination',
 		'field',
+		'event-date',
 	);
 
 	/**
@@ -61,6 +62,7 @@ final class Plugin {
 		add_action( 'init', array( $this, 'register_blocks' ) );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		add_filter( 'register_block_type_args', array( $this, 'enable_featured_image_background' ), 10, 2 );
 
 		Rest::init();
 		Patterns::init();
@@ -73,11 +75,51 @@ final class Plugin {
 	 */
 	public function register_blocks(): void {
 		foreach ( self::BLOCKS as $block ) {
+			// The event-date block is a thin wrapper over The Events Calendar's
+			// date helpers; skip it entirely (editor and front end) when TEC is
+			// inactive so it never shows up without something to render.
+			if ( 'event-date' === $block && ! self::events_calendar_active() ) {
+				continue;
+			}
 			$metadata = LOOP_BUILDER_BUILD_DIR . '/' . $block;
 			if ( is_dir( $metadata ) ) {
 				register_block_type( $metadata );
 			}
 		}
+	}
+
+	/**
+	 * Whether The Events Calendar is active (its date template tags are loaded).
+	 */
+	private static function events_calendar_active(): bool {
+		return class_exists( 'Tribe__Events__Main' ) || function_exists( 'tribe_get_start_date' );
+	}
+
+	/**
+	 * Opt the core Featured Image block back into background-color support.
+	 *
+	 * Core ships core/post-featured-image with `color.background` disabled, so a
+	 * loop card can't put a colored panel behind the image (e.g. to frame a
+	 * transparent logo) from the block itself. Re-enable it here; the color and
+	 * the block's native padding both render on the figure wrapper, so they style
+	 * the image zone directly — no separate Loop Builder control needed.
+	 *
+	 * @param array  $args Block type registration args.
+	 * @param string $name Block name being registered.
+	 * @return array Filtered args.
+	 */
+	public function enable_featured_image_background( array $args, string $name ): array {
+		if ( 'core/post-featured-image' !== $name ) {
+			return $args;
+		}
+		if ( empty( $args['supports'] ) || ! is_array( $args['supports'] ) ) {
+			$args['supports'] = array();
+		}
+		if ( empty( $args['supports']['color'] ) || ! is_array( $args['supports']['color'] ) ) {
+			$args['supports']['color'] = array();
+		}
+		$args['supports']['color']['background'] = true;
+		return $args;
 	}
 
 	/**

@@ -28,7 +28,26 @@ const ORDER_OPTIONS = [
 	},
 	{ label: __( 'Menu order', 'loop-builder' ), value: 'menu_order/asc' },
 	{ label: __( 'Random', 'loop-builder' ), value: 'rand/asc' },
+	{
+		label: __( 'Custom field: A → Z', 'loop-builder' ),
+		value: 'meta_value/asc',
+	},
+	{
+		label: __( 'Custom field: Z → A', 'loop-builder' ),
+		value: 'meta_value/desc',
+	},
+	{
+		label: __( 'Custom field: low → high', 'loop-builder' ),
+		value: 'meta_value_num/asc',
+	},
+	{
+		label: __( 'Custom field: high → low', 'loop-builder' ),
+		value: 'meta_value_num/desc',
+	},
 ];
+
+const isMetaOrder = ( orderBy ) =>
+	orderBy === 'meta_value' || orderBy === 'meta_value_num';
 
 const STICKY_OPTIONS = [
 	{ label: __( 'Include sticky posts', 'loop-builder' ), value: '' },
@@ -134,6 +153,24 @@ export default function QueryPanel( { query, setQuery } ) {
 							setQuery( { orderBy, order } );
 						} }
 					/>
+
+					{ isMetaOrder( query.orderBy ) && (
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __(
+								'Custom field to sort by',
+								'loop-builder'
+							) }
+							value={ query.orderByMetaKey || '' }
+							onChange={ ( orderByMetaKey ) =>
+								setQuery( { orderByMetaKey } )
+							}
+							help={ __(
+								'Meta key whose value sets the order (e.g. event_date). Items without this field are hidden.',
+								'loop-builder'
+							) }
+						/>
+					) }
 
 					<ComboboxControl
 						label={ __( 'Author', 'loop-builder' ) }

@@ -238,26 +238,8 @@ class Render {
 			$vars[] = '--loop-builder-card-border-color:' . self::sanitize_color( (string) $card_style['borderColor'] );
 		}
 
-		// Image zone (the featured image) and content zone (the text group) each
-		// get their own background + padding, independent of the card frame.
-		if ( ! empty( $card_style['imageBackground'] ) ) {
-			$vars[] = '--loop-builder-card-image-bg:' . self::sanitize_color( (string) $card_style['imageBackground'] );
-		}
-		if ( ! empty( $card_style['imagePadding'] ) ) {
-			$pad = self::sanitize_dimension( (string) $card_style['imagePadding'] );
-			if ( $pad ) {
-				$vars[] = '--loop-builder-card-image-padding:' . $pad;
-			}
-		}
-		if ( ! empty( $card_style['contentBackground'] ) ) {
-			$vars[] = '--loop-builder-card-content-bg:' . self::sanitize_color( (string) $card_style['contentBackground'] );
-		}
-		if ( ! empty( $card_style['contentPadding'] ) ) {
-			$pad = self::sanitize_dimension( (string) $card_style['contentPadding'] );
-			if ( $pad ) {
-				$vars[] = '--loop-builder-card-content-padding:' . $pad;
-			}
-		}
+		// The featured-image and content zones are styled on their own blocks
+		// (the Featured Image block and the content Group), not here.
 
 		// Filter out any declarations whose value sanitized to empty.
 		return array_values( array_filter( $vars, static fn( $v ) => substr( $v, -1 ) !== ':' ) );

@@ -1,0 +1,64 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "loop-builder/event-date",
+	"version": "0.1.0",
+	"title": "TEC Event Date",
+	"category": "theme",
+	"icon": "calendar-alt",
+	"description": "Display an event's start date, or start–end range, from The Events Calendar with a selectable date format.",
+	"keywords": [ "event", "date", "calendar", "tribe", "schedule" ],
+	"textdomain": "loop-builder",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"display": {
+			"type": "string",
+			"default": "start-end"
+		},
+		"format": {
+			"type": "string",
+			"default": "default"
+		},
+		"customFormat": {
+			"type": "string",
+			"default": ""
+		},
+		"separator": {
+			"type": "string",
+			"default": " – "
+		},
+		"tagName": {
+			"type": "string",
+			"default": "span"
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"gradients": true,
+			"background": true,
+			"text": true,
+			"link": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php"
+}

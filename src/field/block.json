@@ -30,6 +30,54 @@
 		"useAcf": {
 			"type": "boolean",
 			"default": true
+		},
+		"displayAs": {
+			"type": "string",
+			"default": "text"
+		},
+		"imageSize": {
+			"type": "string",
+			"default": "medium"
+		},
+		"imageAltSource": {
+			"type": "string",
+			"default": "custom"
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAltMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"linkTextSource": {
+			"type": "string",
+			"default": "custom"
+		},
+		"linkText": {
+			"type": "string",
+			"default": ""
+		},
+		"linkTextMetaKey": {
+			"type": "string",
+			"default": ""
+		},
+		"linkProtocol": {
+			"type": "string",
+			"default": "url"
+		},
+		"linkNewTab": {
+			"type": "boolean",
+			"default": false
+		},
+		"linkNofollow": {
+			"type": "boolean",
+			"default": false
+		},
+		"linkNoreferrer": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

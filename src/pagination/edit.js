@@ -34,58 +34,48 @@ const JUSTIFY_OPTIONS = [
 	{ value: 'space-between', label: __( 'Apart', 'loop-builder' ) },
 ];
 
-function paginationClassName( type, justify, linkStyle ) {
+// Variant classes only — useBlockProps() already adds the base
+// `wp-block-loop-builder-pagination` class. These go on the same wrapper so the
+// flex container (and its `is-justify-*` alignment) matches the front end, which
+// renders a single wrapper via get_block_wrapper_attributes().
+function paginationVariantClasses( type, justify, linkStyle ) {
 	return [
-		'wp-block-loop-builder-pagination',
 		`is-type-${ type }`,
 		`is-justify-${ justify || 'center' }`,
 		`is-pg-${ linkStyle || 'plain' }`,
 	].join( ' ' );
 }
 
-function Preview( { type, loadMoreLabel, justify, linkStyle, accentColor } ) {
-	const className = paginationClassName(
-		type === 'load-more' ? 'load-more' : type,
-		justify,
-		linkStyle
-	);
-	const style = accentColor ? { '--lb-pg-accent': accentColor } : undefined;
-
+function PreviewItems( { type, loadMoreLabel } ) {
 	if ( type === 'load-more' ) {
 		return (
-			<div className={ className } style={ style }>
-				<button
-					type="button"
-					className="loop-builder-load-more"
-					disabled
-				>
-					{ loadMoreLabel || __( 'Load more', 'loop-builder' ) }
-				</button>
-			</div>
+			<button type="button" className="loop-builder-load-more" disabled>
+				{ loadMoreLabel || __( 'Load more', 'loop-builder' ) }
+			</button>
 		);
 	}
 
 	if ( type === 'prev-next' ) {
 		return (
-			<div className={ className } style={ style }>
+			<>
 				<span className="prev-page">
 					{ __( '← Previous', 'loop-builder' ) }
 				</span>
 				<span className="next-page">
 					{ __( 'Next →', 'loop-builder' ) }
 				</span>
-			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className={ className } style={ style }>
+		<>
 			<span className="page-numbers current">1</span>
 			<span className="page-numbers">2</span>
 			<span className="page-numbers">3</span>
 			<span className="page-numbers dots">…</span>
 			<span className="page-numbers">8</span>
-		</div>
+		</>
 	);
 }
 
@@ -99,7 +89,12 @@ export default function Edit( { attributes, setAttributes } ) {
 		accentColor,
 	} = attributes;
 	const [ palette ] = useSettings( 'color.palette' );
-	const blockProps = useBlockProps();
+	const resolvedType =
+		paginationType === 'load-more' ? 'load-more' : paginationType;
+	const blockProps = useBlockProps( {
+		className: paginationVariantClasses( resolvedType, justify, linkStyle ),
+		style: accentColor ? { '--lb-pg-accent': accentColor } : undefined,
+	} );
 
 	return (
 		<>
@@ -200,12 +195,9 @@ export default function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<Preview
+				<PreviewItems
 					type={ paginationType }
 					loadMoreLabel={ loadMoreLabel }
-					justify={ justify }
-					linkStyle={ linkStyle }
-					accentColor={ accentColor }
 				/>
 			</div>
 		</>

@@ -31,35 +31,50 @@ class Query {
 		$query    = wp_parse_args(
 			$query,
 			array(
-				'postType'  => 'post',
-				'perPage'   => 10,
-				'offset'    => 0,
-				'order'     => 'desc',
-				'orderBy'   => 'date',
-				'author'    => '',
-				'search'    => '',
-				'sticky'    => '',
-				'exclude'   => array(),
-				'postIn'    => array(),
-				'parents'   => array(),
-				'taxQuery'  => array(),
-				'metaQuery' => array(),
-				'dateQuery' => array(),
+				'postType'       => 'post',
+				'perPage'        => 10,
+				'offset'         => 0,
+				'order'          => 'desc',
+				'orderBy'        => 'date',
+				'orderByMetaKey' => '',
+				'author'         => '',
+				'search'         => '',
+				'sticky'         => '',
+				'exclude'        => array(),
+				'postIn'         => array(),
+				'parents'        => array(),
+				'taxQuery'       => array(),
+				'metaQuery'      => array(),
 			)
 		);
 		$per_page = (int) $query['perPage'];
 		$offset   = (int) $query['offset'];
 
+		$orderby = self::sanitize_orderby( $query['orderBy'] );
+
 		$args = array(
 			'post_type'           => is_array( $query['postType'] ) ? array_map( 'sanitize_key', $query['postType'] ) : sanitize_key( $query['postType'] ),
 			'order'               => self::sanitize_order( $query['order'] ),
-			'orderby'             => self::sanitize_orderby( $query['orderBy'] ),
+			'orderby'             => $orderby,
 			'post_status'         => 'publish',
 			'posts_per_page'      => $per_page,
 			'offset'              => ( $per_page * ( max( 1, $page ) - 1 ) ) + $offset,
 			'ignore_sticky_posts' => 1,
 			'no_found_rows'       => false,
 		);
+
+		// Sorting by a custom field needs the meta key to sort on. Setting
+		// meta_key restricts results to posts that have the field — which is the
+		// desired behavior when ordering by, say, an event date. If the key is
+		// missing we fall back to date order to avoid an empty/undefined sort.
+		if ( in_array( $orderby, array( 'meta_value', 'meta_value_num' ), true ) ) {
+			$order_meta_key = sanitize_text_field( (string) $query['orderByMetaKey'] );
+			if ( '' === $order_meta_key ) {
+				$args['orderby'] = 'date';
+			} else {
+				$args['meta_key'] = $order_meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			}
+		}
 
 		// Author. Accepts a comma string or array of IDs.
 		if ( ! empty( $query['author'] ) ) {
@@ -99,11 +114,6 @@ class Query {
 			$args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 		}
 
-		$date_query = self::build_date_query( $query['dateQuery'] );
-		if ( $date_query ) {
-			$args['date_query'] = $date_query;
-		}
-
 		/**
 		 * Filter the final WP_Query args produced for a Loop Builder query.
 		 *
@@ -132,7 +142,7 @@ class Query {
 	 * @return string A permitted orderby key, defaulting to 'date'.
 	 */
 	private static function sanitize_orderby( string $orderby ) {
-		$allowed = array( 'date', 'modified', 'title', 'menu_order', 'rand', 'comment_count', 'ID', 'author', 'relevance' );
+		$allowed = array( 'date', 'modified', 'title', 'menu_order', 'rand', 'comment_count', 'ID', 'author', 'relevance', 'meta_value', 'meta_value_num' );
 		return in_array( $orderby, $allowed, true ) ? $orderby : 'date';
 	}
 
@@ -216,7 +226,14 @@ class Query {
 			);
 			// EXISTS / NOT EXISTS take no value.
 			if ( ! in_array( $compare, array( 'EXISTS', 'NOT EXISTS' ), true ) && isset( $clause['value'] ) && '' !== $clause['value'] ) {
-				$entry['value'] = in_array( $compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ? wp_parse_list( $clause['value'] ) : $clause['value'];
+				if ( in_array( $compare, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
+					$entry['value'] = array_map(
+						static fn( $v ) => self::resolve_dynamic_value( $v, $type ),
+						wp_parse_list( $clause['value'] )
+					);
+				} else {
+					$entry['value'] = self::resolve_dynamic_value( $clause['value'], $type );
+				}
 			}
 			$built[] = $entry;
 		}
@@ -228,35 +245,36 @@ class Query {
 	}
 
 	/**
-	 * Build a date_query from a single clause.
+	 * Resolve a dynamic date token in a meta value to a concrete date string.
 	 *
-	 * Clause: { after?, before?, inclusive?, lastDays? }. `lastDays` is a
-	 * convenience that overrides `after` with "N days ago".
+	 * Lets a saved query stay relative to "now" instead of freezing a literal
+	 * date — e.g. an "event date >= {today}" filter keeps surfacing upcoming
+	 * items as time passes. Tokens resolve in the site's configured timezone.
+	 * Non-token values pass through untouched.
 	 *
-	 * @param array $clause Raw date clause.
-	 * @return array date_query, or empty array.
+	 * Supported: {today} (midnight today) and {now} (current date + time). For a
+	 * DATE-typed clause both compare against the date only; DATE/DATETIME casting
+	 * means the same `Y-m-d` token works for ACF date fields (stored `Ymd`) and
+	 * for plugins that store full datetimes such as The Events Calendar.
+	 *
+	 * @param mixed  $value Raw clause value.
+	 * @param string $type  The clause's declared type (CHAR, DATE, DATETIME, ...).
+	 * @return mixed Resolved value, or the original value when not a token.
 	 */
-	private static function build_date_query( array $clause ): array {
-		if ( empty( $clause ) ) {
-			return array();
+	private static function resolve_dynamic_value( $value, string $type ) {
+		if ( ! is_string( $value ) ) {
+			return $value;
 		}
-
-		$entry = array();
-		if ( ! empty( $clause['lastDays'] ) ) {
-			$entry['after']     = absint( $clause['lastDays'] ) . ' days ago';
-			$entry['inclusive'] = true;
-		} else {
-			if ( ! empty( $clause['after'] ) ) {
-				$entry['after'] = sanitize_text_field( $clause['after'] );
-			}
-			if ( ! empty( $clause['before'] ) ) {
-				$entry['before'] = sanitize_text_field( $clause['before'] );
-			}
-			if ( isset( $clause['inclusive'] ) ) {
-				$entry['inclusive'] = (bool) $clause['inclusive'];
-			}
+		$is_datetime = in_array( $type, array( 'DATETIME', 'TIME' ), true );
+		switch ( strtolower( trim( $value ) ) ) {
+			case '{today}':
+				return $is_datetime
+					? current_time( 'Y-m-d' ) . ' 00:00:00'
+					: current_time( 'Y-m-d' );
+			case '{now}':
+				return current_time( 'Y-m-d H:i:s' );
+			default:
+				return $value;
 		}
-
-		return $entry ? array( $entry ) : array();
 	}
 }

@@ -51,8 +51,72 @@ function normalize( value ) {
 const valueless = ( compare ) =>
 	compare === 'EXISTS' || compare === 'NOT EXISTS';
 
+const isDateType = ( type ) => type === 'DATE' || type === 'DATETIME';
+
+const DYNAMIC_OPTIONS = [
+	{ label: __( 'Today (start of day)', 'loop-builder' ), value: '{today}' },
+	{ label: __( 'Right now', 'loop-builder' ), value: '{now}' },
+];
+
+const isDynamicValue = ( value ) => value === '{today}' || value === '{now}';
+
+// Value input for a date/datetime clause. Lets the editor choose a fixed
+// calendar date or a value that stays relative to "now" ({today}/{now}),
+// which the server resolves at query time — e.g. "event date ≥ today".
+function DateValue( { clause, onChange } ) {
+	const value = clause.value || '';
+	const source = isDynamicValue( value ) ? 'dynamic' : 'fixed';
+	return (
+		<>
+			<SelectControl
+				__nextHasNoMarginBottom
+				label={ __( 'Value', 'loop-builder' ) }
+				value={ source }
+				options={ [
+					{
+						label: __( 'Fixed date', 'loop-builder' ),
+						value: 'fixed',
+					},
+					{
+						label: __( 'Relative to now', 'loop-builder' ),
+						value: 'dynamic',
+					},
+				] }
+				onChange={ ( next ) =>
+					onChange( {
+						...clause,
+						value: next === 'dynamic' ? '{today}' : '',
+					} )
+				}
+			/>
+			{ source === 'dynamic' ? (
+				<SelectControl
+					__nextHasNoMarginBottom
+					label={ __( 'When', 'loop-builder' ) }
+					value={ value }
+					options={ DYNAMIC_OPTIONS }
+					onChange={ ( when ) =>
+						onChange( { ...clause, value: when } )
+					}
+				/>
+			) : (
+				<TextControl
+					__nextHasNoMarginBottom
+					type="date"
+					label={ __( 'Date', 'loop-builder' ) }
+					value={ value }
+					onChange={ ( date ) =>
+						onChange( { ...clause, value: date } )
+					}
+				/>
+			) }
+		</>
+	);
+}
+
 function MetaClause( { clause, onChange, onRemove } ) {
 	const compare = clause.compare || '=';
+	const clauseType = clause.type || 'CHAR';
 	return (
 		<div className="loop-builder-clause">
 			<TextControl
@@ -72,22 +136,26 @@ function MetaClause( { clause, onChange, onRemove } ) {
 			/>
 			{ ! valueless( compare ) && (
 				<>
-					<TextControl
-						__nextHasNoMarginBottom
-						label={ __( 'Value', 'loop-builder' ) }
-						value={ clause.value || '' }
-						help={
-							compare === 'IN' || compare === 'NOT IN'
-								? __(
-										'Comma-separate multiple values.',
-										'loop-builder'
-								  )
-								: undefined
-						}
-						onChange={ ( value ) =>
-							onChange( { ...clause, value } )
-						}
-					/>
+					{ isDateType( clauseType ) ? (
+						<DateValue clause={ clause } onChange={ onChange } />
+					) : (
+						<TextControl
+							__nextHasNoMarginBottom
+							label={ __( 'Value', 'loop-builder' ) }
+							value={ clause.value || '' }
+							help={
+								compare === 'IN' || compare === 'NOT IN'
+									? __(
+											'Comma-separate multiple values.',
+											'loop-builder'
+									  )
+									: undefined
+							}
+							onChange={ ( value ) =>
+								onChange( { ...clause, value } )
+							}
+						/>
+					) }
 					<SelectControl
 						__nextHasNoMarginBottom
 						label={ __( 'Treat value as', 'loop-builder' ) }

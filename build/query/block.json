@@ -63,6 +63,7 @@
         "offset": 0,
         "order": "desc",
         "orderBy": "date",
+        "orderByMetaKey": "",
         "author": "",
         "search": "",
         "sticky": "",
@@ -76,8 +77,7 @@
         "metaQuery": {
           "relation": "AND",
           "clauses": []
-        },
-        "dateQuery": {}
+        }
       }
     },
     "displayLayout": {

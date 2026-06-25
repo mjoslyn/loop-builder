@@ -53,6 +53,7 @@
 				"offset": 0,
 				"order": "desc",
 				"orderBy": "date",
+				"orderByMetaKey": "",
 				"author": "",
 				"search": "",
 				"sticky": "",
@@ -60,8 +61,7 @@
 				"postIn": [],
 				"parents": [],
 				"taxQuery": { "relation": "AND", "clauses": [] },
-				"metaQuery": { "relation": "AND", "clauses": [] },
-				"dateQuery": {}
+				"metaQuery": { "relation": "AND", "clauses": [] }
 			}
 		},
 		"displayLayout": {

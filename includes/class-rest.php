@@ -67,6 +67,89 @@ class Rest {
 				),
 			)
 		);
+
+		// Editor-only: list the custom fields available for a post type so the
+		// Custom Field block can offer them in a dropdown.
+		register_rest_route(
+			self::NAMESPACE,
+			'/fields',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( __CLASS__, 'handle_fields' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'edit_posts' );
+				},
+				'args'                => array(
+					'postType' => array(
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_key',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Return the custom fields available for a post type: ACF fields whose group
+	 * is assigned to it, plus the public (non-underscore) meta keys posts of that
+	 * type actually use. Shaped as a list of { key, label } for a select control.
+	 *
+	 * @param \WP_REST_Request $request REST request.
+	 * @return \WP_REST_Response
+	 */
+	public static function handle_fields( \WP_REST_Request $request ): \WP_REST_Response {
+		$post_type = sanitize_key( (string) $request['postType'] );
+		if ( '' === $post_type || ! post_type_exists( $post_type ) ) {
+			return new \WP_REST_Response( array() );
+		}
+
+		$fields = array(); // key => label.
+
+		// ACF fields whose field group is assigned to this post type.
+		if ( function_exists( 'acf_get_field_groups' ) && function_exists( 'acf_get_fields' ) ) {
+			foreach ( acf_get_field_groups( array( 'post_type' => $post_type ) ) as $group ) {
+				if ( empty( $group['key'] ) ) {
+					continue;
+				}
+				foreach ( (array) acf_get_fields( $group['key'] ) as $field ) {
+					if ( ! empty( $field['name'] ) ) {
+						$fields[ $field['name'] ] = ! empty( $field['label'] ) ? $field['label'] : $field['name'];
+					}
+				}
+			}
+		}
+
+		// Public meta keys actually present on posts of this type.
+		global $wpdb;
+		$keys = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.meta_key
+				 FROM {$wpdb->postmeta} pm
+				 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				 WHERE p.post_type = %s AND pm.meta_key NOT LIKE %s
+				 ORDER BY pm.meta_key
+				 LIMIT 300",
+				$post_type,
+				$wpdb->esc_like( '_' ) . '%'
+			)
+		); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
+		foreach ( (array) $keys as $key ) {
+			if ( '' !== $key && ! isset( $fields[ $key ] ) ) {
+				$fields[ $key ] = $key;
+			}
+		}
+
+		$out = array();
+		foreach ( $fields as $key => $label ) {
+			$out[] = array(
+				'key'   => (string) $key,
+				'label' => (string) $label,
+			);
+		}
+
+		return new \WP_REST_Response( $out );
 	}
 
 	/**
